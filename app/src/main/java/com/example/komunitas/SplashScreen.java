@@ -17,7 +17,7 @@ public class SplashScreen extends AppCompatActivity {
                 .withFullScreen()
                 .withTargetActivity(MapsActivity.class)
                 .withSplashTimeOut(4000)
-                .withLogo(R.drawable.logo);
+                .withLogo(R.drawable.splash);
 
 
         View easySplashScreen = config.create();

@@ -11,7 +11,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -31,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+        GoogleMap.OnInfoWindowClickListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
@@ -38,6 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
     SearchView searchView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +64,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 String location = searchView.getQuery().toString();
                 List<Address> addressList = null;
 
-                if(location != null || !location.equals("")){
+                if (location != null || !location.equals("")) {
                     Geocoder geocoder = new Geocoder(MapsActivity.this);
-                    try{
+                    try {
                         addressList = geocoder.getFromLocationName(location, 1);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -68,7 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Address address = addressList.get(0);
                     LatLng latlng = new LatLng(address.getLatitude(), address.getLongitude());
                     mMap.addMarker(new MarkerOptions().position(latlng).title(location));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng,13));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 13));
                 }
                 return false;
             }
@@ -80,6 +86,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
         mapFragment.getMapAsync(this);
+
+
+//        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+//            @Override
+//            public View getInfoWindow(Marker arg0) {
+//                View v = getLayoutInflater().inflate(R.layout.custom_info_window, null);
+//                return v;
+//            }
+//
+//            @Override
+//            public View getInfoContents(Marker arg0) {
+//                return null;
+//            }
+//        });
     }
 
 
@@ -104,28 +124,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //marker uph
         LatLng uph = new LatLng(3.59, 98.67);
-        mMap.addMarker(new MarkerOptions().position(uph).title("Universitas Pelita Harapan Medan").snippet("Jl. Imam Bonjol No. 6, Lippo Plaza Lantai 5 - 7"));
+        mMap.addMarker(new MarkerOptions().position(uph).title("Universitas Pelita Harapan Medan").snippet("Jl. Imam Bonjol No. 6, Lippo Plaza Lantai 5 - 7")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon48)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(uph));
 
         //marker dilo medan
         LatLng dilo = new LatLng(3.571, 98.67);
-        mMap.addMarker(new MarkerOptions().position(dilo).title("DILO Medan").snippet("Jl. Monginsidi No.6"));
+        mMap.addMarker(new MarkerOptions().position(dilo).title("DILO Medan").snippet("Jl. Monginsidi No.6")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon48)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(dilo));
 
         //marker Cradle
         LatLng cradle = new LatLng(3.585, 98.66);
-        mMap.addMarker(new MarkerOptions().position(cradle).title("Cradle Event & Co-working Space").snippet("Jl. S. Parman No 217"));
+        mMap.addMarker(new MarkerOptions().position(cradle).title("Cradle Event & Co-working Space").snippet("Jl. S. Parman No 217")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon48)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(cradle));
 
-        LatLng MEDAN = new LatLng(3.58, 98.67);
-        Marker medan = mMap.addMarker(new MarkerOptions()
+        //marker Time Dev Club
+        LatLng timedev = new LatLng(3.586, 98.68);
+        mMap.addMarker(new MarkerOptions().position(timedev).title("Time Developer Club").snippet("Jl. Merbabu No.32 aa-bb")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon48)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(timedev));
+
+        LatLng MEDAN = new LatLng(3.594977, 98.674294);
+        mMap.addMarker(new MarkerOptions()
                 .position(MEDAN)
                 .title("Medan")
-                .snippet("Ibu kota dari Provinsi Sumatera Utara"));
+                .snippet("Beberapa Komunitas IT yang aktif adalah Kongkow IT Medan, DevC Medan, Cloud Study Jam Medan")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon48))
+                .zIndex(1.0f));
         CameraUpdate update = CameraUpdateFactory.newLatLngZoom(MEDAN, 17);
         mMap.animateCamera(update);
 
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+//        LatLng BALI = new LatLng(-8.316677, 115.089341);
+//        mMap.addMarker(new MarkerOptions()
+//                .position(BALI)
+//                .title("Bali")
+//                .snippet("Beberapa Komunitas IT yang aktif adalah Bali JS, Bali Dev")
+//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon48)));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(BALI));
+
+        //marker Time Dev Club
+        LatLng bali = new LatLng(-8.316677, 115.089341);
+        mMap.addMarker(new MarkerOptions().position(bali).title("BALI").snippet("Beberapa Komunitas IT yang aktif adalah Bali JS, Bali Dev")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.icon48)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(bali));
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         mMap.setMyLocationEnabled(true);
@@ -166,4 +211,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(this, "Info click ",
+                Toast.LENGTH_SHORT).show();
+    }
 }
